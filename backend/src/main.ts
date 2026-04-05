@@ -1,5 +1,3 @@
-process.loadEnvFile();
-
 import { NestFactory } from '@nestjs/core';
 import { VersioningType } from '@nestjs/common';
 import { AppModule } from './app.module';

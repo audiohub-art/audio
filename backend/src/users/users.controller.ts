@@ -1,8 +1,6 @@
 import {
   Body,
   Controller,
-  Post,
-  UsePipes,
   Get,
   Put,
   Param,
@@ -16,12 +14,6 @@ import { type UpdateUserDto, updateUserSchema } from './dto/update-user.dto';
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
-
-  @Post()
-  @UsePipes(new ZodValidationPipe(createUserSchema))
-  async create(@Body() createUserDto: CreateUserDto) {
-    await this.usersService.create(createUserDto);
-  }
 
   @Put(':id')
   async updateUser(
