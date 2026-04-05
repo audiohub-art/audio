@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ZodValidationPipe } from 'src/pipes/zod-validation.pipe';
-import { type CreateUserDto, createUserSchema } from './dto/create-user.dto';
 import { type UpdateUserDto, updateUserSchema } from './dto/update-user.dto';
 
 @Controller('users')
