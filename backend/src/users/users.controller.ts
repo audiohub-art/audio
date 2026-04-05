@@ -37,6 +37,11 @@ export class UsersController {
     await this.usersService.deleteUser(id);
   }
 
+  @Get(':id')
+  async getUserById(@Param('id', ParseIntPipe) id: number) {
+    return await this.usersService.getUserById(id);
+  }
+
   @Get()
   async getAllUser() {
     return await this.usersService.getAllUsers();

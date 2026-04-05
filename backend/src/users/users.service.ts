@@ -55,6 +55,17 @@ export class UsersService {
     });
   }
 
+  async getUserById(userId: number) {
+    const user = await this.prisma.users.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
   async getAllUsers() {
     const users = await this.prisma.users.findMany();
     return users;
