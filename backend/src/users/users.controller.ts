@@ -7,6 +7,7 @@ import {
   Put,
   Param,
   ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ZodValidationPipe } from 'src/pipes/zod-validation.pipe';
@@ -29,6 +30,11 @@ export class UsersController {
     @Body(new ZodValidationPipe(updateUserSchema)) updateUserDto: UpdateUserDto,
   ) {
     await this.usersService.updateUser(id, updateUserDto);
+  }
+
+  @Delete(':id')
+  async deleteUser(@Param('id', ParseIntPipe) id: number) {
+    await this.usersService.deleteUser(id);
   }
 
   @Get()
