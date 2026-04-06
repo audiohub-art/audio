@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -44,6 +45,25 @@ export class AuthService {
       throw new UnauthorizedException('Identifiants invalides');
     }
     return await this.generateAndStoreTokens(user.id, user.name);
+  }
+
+  async refresh(userId: number, refreshToken: string) {
+    const user = await this.prisma.users.findUnique({
+      where: { id: userId },
+    });
+    if (!user || !user.refreshToken) {
+      throw new ForbiddenException('Access denied');
+    }
+    const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
+
+    if (!isValid) {
+      await this.prisma.users.update({
+        where: { id: userId },
+        data: { refreshToken: null },
+      });
+      throw new ForbiddenException('Invalid token');
+    }
+    return this.generateAndStoreTokens(user.id, user.name);
   }
 
   private async generateAndStoreTokens(userId: number, name: string) {
