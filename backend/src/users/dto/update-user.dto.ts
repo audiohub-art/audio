@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { createUserSchema } from './create-user.dto';
+import { registerSchema } from '../../auth/dto/register.dto';
 
-export const updateUserSchema = createUserSchema.partial();
+export const updateUserSchema = registerSchema.partial();
 
 export type UpdateUserDto = z.infer<typeof updateUserSchema>;

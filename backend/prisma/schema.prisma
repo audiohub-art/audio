@@ -13,7 +13,12 @@ datasource db {
 }
 
 model users {
-  id       Int    @id @default(autoincrement())
-  name     String @unique
-  password String
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  password     String
+  refreshToken String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
 }
