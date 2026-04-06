@@ -1,7 +1,7 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { JwtPayload } from '../strategies/jwt.strategy';
 import { Request } from 'express';
-import { JwtRefreshPayload } from '../guards/refresh-token.guard';
+import { JwtRefreshPayload } from '../strategies/jwt-refresh.strategy';
 
 type UserPayload = JwtPayload | JwtRefreshPayload;
 

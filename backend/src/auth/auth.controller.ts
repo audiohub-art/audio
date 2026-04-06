@@ -5,7 +5,6 @@ import {
   HttpStatus,
   Body,
   UseGuards,
-  Res,
 } from '@nestjs/common';
 import { type RegisterDto, registerSchema } from './dto/register.dto';
 import { ZodValidationPipe } from 'src/pipes/zod-validation.pipe';
