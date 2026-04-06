@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreatePostDto } from './create-post.dto';
+import { createPostSchema } from './create-post.dto';
 
-export class UpdatePostDto extends PartialType(CreatePostDto) {}
+import { z } from 'zod';
+
+export const updatePostSchema = createPostSchema.partial();
+
+export type UpdatePostDto = z.infer<typeof updatePostSchema>;
