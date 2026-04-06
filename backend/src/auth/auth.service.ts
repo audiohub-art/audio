@@ -1,9 +1,14 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto } from '../auth/dto/register.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import bcrypt from 'bcrypt';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,10 +33,20 @@ export class AuthService {
         password: hashedPassword,
       },
     });
-    return this.generateTokens(user.id, user.name);
+    return this.generateAndStoreTokens(user.id, user.name);
   }
 
-  private async generateTokens(userId: number, name: string) {
+  async login(loginDto: LoginDto) {
+    const user = await this.prisma.users.findUnique({
+      where: { name: loginDto.name },
+    });
+    if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
+      throw new UnauthorizedException('Identifiants invalides');
+    }
+    return await this.generateAndStoreTokens(user.id, user.name);
+  }
+
+  private async generateAndStoreTokens(userId: number, name: string) {
     const payload = { sub: userId, name };
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
@@ -43,6 +58,11 @@ export class AuthService {
         expiresIn: '7d',
       }),
     ]);
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.prisma.users.update({
+      where: { id: userId },
+      data: { refreshToken: hashedRefreshToken },
+    });
     return { accessToken, refreshToken };
   }
 }
