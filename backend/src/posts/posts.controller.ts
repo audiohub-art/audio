@@ -1,25 +1,35 @@
 import {
   Controller,
-  Get,
+  //Get,
   Post,
   Body,
-  Put,
-  Param,
-  Delete,
+  //Put,
+  //Param,
+  //Delete,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+//import { UpdatePostDto } from './dto/update-post.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 @Controller('posts')
+@UseGuards(JwtAuthGuard)
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post('create')
-  async create(@Body() createPostDto: CreatePostDto) {
-    return await this.postsService.create(createPostDto);
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @CurrentUser('sub') userId: number,
+    @Body() createPostDto: CreatePostDto,
+  ) {
+    return await this.postsService.create(userId, createPostDto);
   }
-
+  /*
   @Get()
   async findAll() {
     return await this.postsService.findAll();
@@ -38,5 +48,5 @@ export class PostsController {
   @Delete('delete/:id')
   async remove(@Param('id') id: string) {
     return await this.postsService.remove(+id);
-  }
+    } */
 }
