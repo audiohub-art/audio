@@ -1,6 +1,6 @@
 import {
   Controller,
-  //Get,
+  Get,
   Post,
   Body,
   //Put,
@@ -15,6 +15,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 //import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('posts')
 @UseGuards(JwtAuthGuard)
@@ -29,12 +30,14 @@ export class PostsController {
   ) {
     return await this.postsService.create(userId, createPostDto);
   }
-  /*
+
   @Get()
+  @Public()
+  @HttpCode(HttpStatus.OK)
   async findAll() {
     return await this.postsService.findAll();
   }
-
+  /*
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.postsService.findOne(+id);

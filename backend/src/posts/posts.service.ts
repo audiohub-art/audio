@@ -17,4 +17,11 @@ export class PostsService {
       },
     });
   }
+
+  async findAll() {
+    const posts = await this.prisma.posts.findMany({
+      select: { users: true },
+    });
+    return posts;
+  }
 }
