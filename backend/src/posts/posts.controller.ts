@@ -4,7 +4,7 @@ import {
   Post,
   Body,
   //Put,
-  //Param,
+  Param,
   //Delete,
   UseGuards,
   HttpCode,
@@ -37,12 +37,12 @@ export class PostsController {
   async findAll() {
     return await this.postsService.findAll();
   }
-  /*
+
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     return await this.postsService.findOne(+id);
   }
-
+  /*
   @Put('modify/:id')
   async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return await this.postsService.update(+id, updatePostDto);
