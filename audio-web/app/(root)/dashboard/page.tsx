@@ -1,4 +1,4 @@
-import { logout } from '@/app/actions/auth';
+import { logout } from '@/services/auth';
 import { getAccessToken } from '@/lib/session';
 
 export default async function DashboardPage() {
@@ -12,7 +12,7 @@ export default async function DashboardPage() {
       const payloadJson = Buffer.from(payloadBase64, 'base64').toString('utf8');
       const payload = JSON.parse(payloadJson);
       username = payload.name || username;
-    } catch (e) {
+    } catch {
       // ignore
     }
   }

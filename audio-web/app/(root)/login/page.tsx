@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import { login } from '@/app/actions/auth';
+import { login } from '@/services/auth';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -63,7 +63,7 @@ export default function LoginPage() {
 
           <div className="text-sm text-center">
             <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-              Don't have an account? Register
+              Don{"'"}t have an account? Register
             </Link>
           </div>
         </form>
