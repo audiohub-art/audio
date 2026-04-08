@@ -1,9 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getAccessToken } from "@/lib/session";
 
 export default async function Home() {
-  const token = await getAccessToken();
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center min-h-screen bg-zinc-50 font-sans dark:bg-black p-8">
@@ -26,31 +24,7 @@ export default async function Home() {
           authentication integrating with NestJS.
         </p>
 
-        <div className="flex gap-4 mt-8">
-          {token ? (
-            <Link
-              href="/dashboard"
-              className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
-            >
-              Go to Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/register"
-                className="px-6 py-3 bg-white text-zinc-900 border border-zinc-200 font-medium rounded-lg hover:bg-zinc-50 dark:bg-zinc-900 dark:text-white dark:border-zinc-700 dark:hover:bg-zinc-800 transition-colors shadow-sm"
-              >
-                Create Account
-              </Link>
-            </>
-          )}
-        </div>
+
       </main>
     </div>
   );
