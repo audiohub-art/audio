@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { auth } from "@/services/auth"
 
-// Add the routes you want to protect here
 const protectedRoutes = ["/dashboard"];
 const authRoutes = ["/login", "/register"];
 
-export function proxy(request: NextRequest) {
-  const accessToken = request.cookies.get("accessToken")?.value;
-  const refreshToken = request.cookies.get("refreshToken")?.value;
+export async function proxy(request: NextRequest) {
+  const session = await auth();
 
   const { pathname } = request.nextUrl;
 
@@ -16,14 +15,12 @@ export function proxy(request: NextRequest) {
   );
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
 
-  // If there's no auth info at all and the route is protected, redirect to login
-  if (isProtectedRoute && !accessToken && !refreshToken) {
+  if (isProtectedRoute && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // If the user is logged in, they shouldn't see the login/register pages
-  if (isAuthRoute && (accessToken || refreshToken)) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (isAuthRoute && session) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();
