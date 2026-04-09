@@ -15,11 +15,13 @@ export async function proxy(request: NextRequest) {
   );
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
 
-  if (isProtectedRoute && !session) {
+  const hasValidSession = session && session.error !== "RefreshAccessTokenError";
+
+  if (isProtectedRoute && !hasValidSession) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (isAuthRoute && session) {
+  if (isAuthRoute && hasValidSession) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

@@ -1,10 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from "next-auth/jwt"
-import { Api, PrivateApi } from '@/lib/api/api';
-import { login } from './user';
-
-
+import axios from "axios"
 
 interface RefreshResponse {
   accessToken: string;
@@ -17,34 +14,32 @@ export const { handlers, signIn, signOut, auth }  = NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
+        accessToken: { label: "accessToken", type: "text" },
+        refreshToken: { label: "refreshToken", type: "text" },
         name: { label: "name", type: "text" },
-        password: { label: "password", type: "password" },
+        id: { label: "id", type: "text" },
+        accessTokenExpires: { label: "accessTokenExpires", type: "number" },
       },
       async authorize(credentials) {
-        if (!credentials?.name || !credentials?.password) return null;
-        try {
-          const data = await login(credentials.name as string, credentials.password as string);
-          if (!data) return null
-          return {
-            id: data.user.id,
-            name: data.user.name,
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-            accessTokenExpires: data.expiresIn,
-          }
-        } catch {
-          return null;
+        if (!credentials?.accessToken) return null;
+
+        return {
+          id: credentials.id as string,
+          name: credentials.name as string,
+          accessToken: credentials.accessToken as string,
+          refreshToken: credentials.refreshToken as string,
+          accessTokenExpires: Number(credentials.accessTokenExpires),
         }
       }
     })
   ],
 
   callbacks: {
-    async jwt({ token, user }): Promise<JWT> {
+    async jwt({ token, user }) {
       if (user) {
         return {
           ...token,
-          id: user.id as number,
+          id: user.id,
           accessToken: user.accessToken,
           refreshToken: user.refreshToken,
           accessTokenExpires: user.accessTokenExpires
@@ -53,7 +48,8 @@ export const { handlers, signIn, signOut, auth }  = NextAuth({
       if (Date.now() < token.accessTokenExpires) {
         return token;
       }
-      return refreshAccessToken(token);
+      const res = await refreshAccessToken(token);
+      return res
     },
 
     async session({ session, token }) {
@@ -75,11 +71,14 @@ export const { handlers, signIn, signOut, auth }  = NextAuth({
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
-    const data = await PrivateApi.post<RefreshResponse>(
-      "/auth/refresh",
-      { refreshAccessToken: token.refreshToken },
-      undefined,
-      token.refreshToken
+    const { data } = await axios.post(
+      `${process.env.BACKEND_URL}/auth/refresh`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token.refreshToken}`,
+        }
+      }
     )
 
     return {
@@ -87,12 +86,12 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,
       accessTokenExpires: Date.now() + data.expiresIn * 1000,
+      error: undefined
     };
-  } catch (error) {
-    console.log("Failed to reload token", error);
+  } catch {
     return {
       ...token,
-      error: "RefreshAccessTokenError"
+      error: "RefreshAccessTokenError" as const
     }
   }
 }

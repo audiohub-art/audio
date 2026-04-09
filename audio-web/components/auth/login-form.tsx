@@ -20,6 +20,8 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
+import { login } from "@/services/user";
 
 export function LoginForm({
   className,
@@ -36,17 +38,20 @@ export function LoginForm({
     const name = formData.get("name") as string;
     const password = formData.get("password") as string;
 
-    const res = await signIn("credentials", {
-      name,
-      password,
-      redirect: false,
-    })
-    if (res?.error) {
-          setLoading(false); // On enlève le loading seulement en cas d'erreur
-        } else {
-          router.push("/");
-          router.refresh(); // Met à jour le contexte de session dans toute l'app
-        }
+    try {
+      const res = await login(name, password)
+      if (!res) {
+        setLoading(false);
+        toast.error("Failed to login, Please try again", { position: "bottom-center"})
+      } else {
+        toast.success("Login successfully", { position: "bottom-center"})
+        router.push("/");
+        router.refresh(); // Met à jour le contexte de session dans toute l'app
+      }
+    } catch {
+      setLoading(false);
+      toast.error("Failed to login, Please try again", { position: "bottom-center"})
+    }
   }
 
   return (

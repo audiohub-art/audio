@@ -35,21 +35,12 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     const password = formData.get("password") as string;
     try {
       const res = await register(name, password)
-
-      if (!res) return null;
-      const signInRes = await signIn("credentials", {
-          name,
-        password,
-        redirect: false,
-      });
-
-      if (signInRes?.error) {
+      if (!res) {
       } else {
-        router.push("/");
-        router.refresh();
+        router.push("/login");
       }
-    } catch (err) {
-      console.log(err)
+    } catch {
+
     } finally {
       setLoading(false);
     }
