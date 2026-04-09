@@ -17,9 +17,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation";
 import { useState } from "react"
-import { signIn } from "next-auth/react"
 import { register } from "@/services/user"
 import Link from "next/link";
+import { toast } from "sonner";
 
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
@@ -36,11 +36,13 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     try {
       const res = await register(name, password)
       if (!res) {
+        toast.error("Failed to create account, please try again", { position: "bottom-center"})
       } else {
+        toast.success("Account create successfully", { position: "bottom-center"})
         router.push("/login");
       }
     } catch {
-
+      toast.error("Failed to create account, please try again", { position: "bottom-center"})
     } finally {
       setLoading(false);
     }
