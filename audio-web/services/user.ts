@@ -1,16 +1,6 @@
 "use server"
-import { createPrivateApi, createPublicApi } from "@/lib/api"
+import { createPublicApi } from "@/lib/api"
 import { signIn, auth } from "./auth";
-
-interface LoginResponse {
-  user: {
-    id: number;
-    name: string;
-  };
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-}
 
 export async function register(name: string, password: string) {
   try {

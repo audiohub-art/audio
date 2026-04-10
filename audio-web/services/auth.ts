@@ -3,12 +3,6 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from "next-auth/jwt"
 import axios from "axios"
 
-interface RefreshResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-}
-
 export const { handlers, signIn, signOut, auth }  = NextAuth({
   providers: [
     CredentialsProvider({

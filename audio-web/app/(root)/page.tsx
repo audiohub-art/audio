@@ -1,30 +1,25 @@
-import Image from "next/image";
+import { getAllPosts } from "@/services/post";
+import { SearchX } from "lucide-react";
+import { PostList } from "@/components/post/list"
 
 export default async function Home() {
-
+  const { data, error } = await getAllPosts();
+  console.log("data", data)
+  console.log("error", error)
   return (
     <div className="flex flex-col flex-1 items-center justify-center min-h-screen bg-zinc-50 font-sans dark:bg-black p-8">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-center gap-12 text-center bg-white dark:bg-zinc-950 p-12 rounded-3xl shadow-xl dark:border dark:border-zinc-800">
-        <Image
-          className="dark:invert mb-8"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={150}
-          height={30}
-          priority
-        />
-
-        <h1 className="text-4xl font-bold tracking-tight text-black dark:text-white">
-          Audio App Auth
-        </h1>
-
-        <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-lg">
-          Welcome to the Next.js frontend with complete server-action based
-          authentication integrating with NestJS.
-        </p>
-
-
-      </main>
+      {data && data.length > 0 ? (
+        <div className="w-full max-w-[2000px] mx-auto min-h-screen p-4 md:p-6 lg:p-8">
+          <PostList posts={data} />
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-5">
+            <SearchX className="h-8 w-8 text-muted-foreground"/>
+          </div>
+        </div>
+      )
+      }
     </div>
   );
 }
