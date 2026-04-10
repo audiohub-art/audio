@@ -1,6 +1,6 @@
 "use server"
 import { createPrivateApi, createPublicApi } from "@/lib/api"
-import { signIn } from "./auth";
+import { signIn, auth } from "./auth";
 
 interface LoginResponse {
   user: {
@@ -38,4 +38,11 @@ export async function login(name: string, password: string) {
   } catch {
     return false
   }
+}
+
+export async function getUser() {
+  const session = await auth();
+  if (!session?.user) return undefined;
+  const user = session.user;
+  return user
 }
