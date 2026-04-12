@@ -2,7 +2,13 @@
 import type { User } from "@/types/user";
 import Image from "next/image";
 import Link from "next/link";
-import { CircleUserRound, Bolt, Home, AudioLines } from "lucide-react";
+import {
+  CircleUserRound,
+  Bolt,
+  Home,
+  AudioLines,
+  PlusSquare,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
@@ -42,6 +48,19 @@ export const Sidebar: React.FC<{ user: User | undefined }> = ({ user }) => {
             <AudioLines
               className="w-7 h-7"
               strokeWidth={path === "/post" ? 2.5 : 2}
+            />
+          </Link>
+          <Link
+            href="/post/create"
+            className={`p-3 rounded-xl transition-all duration-200 ${
+              path === "/post/create"
+                ? "bg-accent text-accent-foreground"
+                : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+            }`}
+          >
+            <PlusSquare
+              className="w-7 h-7"
+              strokeWidth={path === "/post/create" ? 2.5 : 2}
             />
           </Link>
           <DropdownMenu modal={false}>
