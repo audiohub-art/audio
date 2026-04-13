@@ -18,7 +18,7 @@ export async function proxy(request: NextRequest) {
   const hasValidSession = session && session.error !== "RefreshAccessTokenError";
 
   if (isProtectedRoute && !hasValidSession) {
-    return NextResponse.redirect(new URL("/login"));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (isAuthRoute && hasValidSession) {

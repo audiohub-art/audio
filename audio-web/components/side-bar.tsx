@@ -25,7 +25,7 @@ export const Sidebar: React.FC<{ user: User | undefined }> = ({ user }) => {
       <div className="flex flex-col items-center gap-12 w-full">
         <Link href="/" className="transition-opacity hover:opacity-80">
           <Image src="/audio.svg" alt="AudioHub" width={46} height={46} />
-        </Link>
+          </Link>
         <nav className="flex flex-col items-center gap-6 mt-4">
           <Link
             href="/"

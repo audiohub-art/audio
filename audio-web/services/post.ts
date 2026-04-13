@@ -11,10 +11,24 @@ export async function getAllPosts(): Promise<ServiceResponse<Post[]>> {
 
     return { data: data.data, error: null }
   } catch (error) {
-    console.error("Error fetching posts", error);
     return {
       data: null,
       error: error instanceof Error ? error.message : "Failed to get all posts",
+    }
+  }
+}
+
+export async function getPost(id: string): Promise<ServiceResponse<Post>> {
+  try {
+    const api = await createPublicApi();
+
+    const data = await api.get(`/posts/${id}`);
+
+    return { data: data.data, error: null }
+  } catch (error) {
+    return {
+      data: null,
+      error: error instanceof Error ? error.message : "Failed to get post",
     }
   }
 }
@@ -27,7 +41,6 @@ export async function createPost(title: string, description: string): Promise<Se
 
     return { data: undefined, error: null }
   } catch (error) {
-    console.error("Error create post", error);
     return {
       data: null,
       error: error instanceof Error ? error.message : "Failed to create post",
