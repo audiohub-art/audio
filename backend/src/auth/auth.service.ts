@@ -72,20 +72,25 @@ export class AuthService {
 
   private async generateAndStoreTokens(userId: number, name: string) {
     const payload = { sub: userId, name };
+    const expiresIn = 15 * 60;
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_ACCESS_SECRET'),
-        expiresIn: '15m',
+        expiresIn: expiresIn,
       }),
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
         expiresIn: '7d',
       }),
     ]);
-    await this.prisma.users.update({
+    const user = await this.prisma.users.update({
       where: { id: userId },
       data: { refreshToken: this.hashToken(refreshToken) },
+      select: {
+        id: true,
+        name: true,
+      },
     });
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, expiresIn, user };
   }
 }
