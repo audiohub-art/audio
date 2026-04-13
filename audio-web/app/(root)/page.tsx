@@ -4,8 +4,6 @@ import { PostList } from "@/components/post/list"
 
 export default async function Home() {
   const { data, error } = await getAllPosts();
-  console.log("data", data)
-  console.log("error", error)
   return (
     <div className="flex flex-col flex-1 items-center justify-center min-h-screen bg-zinc-50 font-sans dark:bg-black p-8">
       {data && data.length > 0 ? (

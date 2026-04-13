@@ -1,4 +1,5 @@
-import { createPublicApi } from "@/lib/api"
+"use server"
+import { createPrivateApi, createPublicApi } from "@/lib/api"
 import { ServiceResponse } from "@/types/response";
 import type { Post } from "@/types/post";
 
@@ -14,6 +15,22 @@ export async function getAllPosts(): Promise<ServiceResponse<Post[]>> {
     return {
       data: null,
       error: error instanceof Error ? error.message : "Failed to get all posts",
+    }
+  }
+}
+
+export async function createPost(title: string, description: string): Promise<ServiceResponse<undefined>> {
+  try {
+    const api = await createPrivateApi();
+
+    await api.post("/posts/create", { title, description });
+
+    return { data: undefined, error: null }
+  } catch (error) {
+    console.error("Error create post", error);
+    return {
+      data: null,
+      error: error instanceof Error ? error.message : "Failed to create post",
     }
   }
 }

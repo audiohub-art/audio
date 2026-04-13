@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { auth } from "@/services/auth"
 
-const protectedRoutes = ["/dashboard"];
+const protectedRoutes = ["/dashboard","/post/create"];
 const authRoutes = ["/login", "/register"];
 
 export async function proxy(request: NextRequest) {
@@ -18,7 +18,7 @@ export async function proxy(request: NextRequest) {
   const hasValidSession = session && session.error !== "RefreshAccessTokenError";
 
   if (isProtectedRoute && !hasValidSession) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/login"));
   }
 
   if (isAuthRoute && hasValidSession) {

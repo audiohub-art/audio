@@ -11,7 +11,7 @@ import type { Post } from "@/types/post";
 import * as z from "zod";
 import { Input } from "../ui/input";
 
-export function FormPost({ post }: { post?: Post }) {
+export function FormPost({ post, onSubmit }: { post?: Post, onSubmit: (data: { title: string; description: string }) => void }) {
   const formSchema = z.object({
     title: z
       .string()
@@ -26,10 +26,10 @@ export function FormPost({ post }: { post?: Post }) {
       description: post?.description ?? "",
     },
   });
-  const handleSubmit = () => {};
   return (
     <div className="lg:col-span-2">
-      <form id="form-post" onSubmit={form.handleSubmit(handleSubmit)}>
+      <form id="form-post" onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="flex-col gap-10">
         <FieldGroup>
           <Controller
             name="title"
@@ -41,8 +41,9 @@ export function FormPost({ post }: { post?: Post }) {
                   {...field}
                   id="postTitle"
                   aria-invalid={fieldState.invalid}
-                  placeholder="Title"
+                  placeholder="Add a title"
                   autoComplete="off"
+                  className="border-border"
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -51,6 +52,29 @@ export function FormPost({ post }: { post?: Post }) {
             )}
           />
         </FieldGroup>
+        <FieldGroup>
+          <Controller
+            name="description"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="postTitle">Description</FieldLabel>
+                <Input
+                  {...field}
+                  id="postTitle"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Add a description"
+                  autoComplete="off"
+                  className="border-border"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          </FieldGroup>
+        </div>
       </form>
     </div>
   );

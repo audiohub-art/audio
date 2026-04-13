@@ -50,19 +50,21 @@ export const Sidebar: React.FC<{ user: User | undefined }> = ({ user }) => {
               strokeWidth={path === "/post" ? 2.5 : 2}
             />
           </Link>
-          <Link
-            href="/post/create"
-            className={`p-3 rounded-xl transition-all duration-200 ${
-              path === "/post/create"
-                ? "bg-accent text-accent-foreground"
-                : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-            }`}
-          >
-            <PlusSquare
-              className="w-7 h-7"
-              strokeWidth={path === "/post/create" ? 2.5 : 2}
-            />
-          </Link>
+          {user && (
+            <Link
+              href="/post/create"
+              className={`p-3 rounded-xl transition-all duration-200 ${
+                path === "/post/create"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+              }`}
+            >
+              <PlusSquare
+                className="w-7 h-7"
+                strokeWidth={path === "/post/create" ? 2.5 : 2}
+              />
+            </Link>
+          )}
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger className="outline-none rounded-full focus-visible:ring-2 focus-visible:ring-ring">
               <div className="flex items-center justify-center transition-opacity hover:opacity-80">

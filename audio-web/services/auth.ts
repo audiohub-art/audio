@@ -36,7 +36,8 @@ export const { handlers, signIn, signOut, auth }  = NextAuth({
           id: user.id,
           accessToken: user.accessToken,
           refreshToken: user.refreshToken,
-          accessTokenExpires: user.accessTokenExpires
+          accessTokenExpires: user.accessTokenExpires,
+          error: undefined
         }
       }
       if (Date.now() < token.accessTokenExpires) {
