@@ -25,10 +25,47 @@ model users {
 }
 
 model posts {
-  id          Int     @id @default(autoincrement())
-  title       String
-  description String?
+  id            String      @id @default(uuid())
+  title         String
+  description   String?
+  status        postStatus  @default(DRAFT)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
 
-  users   users @relation(fields: [usersId], references: [id])
-  usersId Int
+  users         users       @relation(fields: [userId], references: [id])
+  userId       Int
+
+  audioFile     audios      @relation(fields: [audioId], references: [id])
+  audioId       String      @unique
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum postStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum audioStatus {
+  PENDING
+  ATTACHED
+  DELETED
+}
+
+model audios {
+  id            String @id @default(uuid())
+  key           String @unique
+  originalName  String
+  mimeType      String
+  size          Int
+  duration      Float?
+  status        audioStatus @default(PENDING)
+
+  post          posts?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([status])
 }
