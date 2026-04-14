@@ -1,23 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostsService {
   constructor(private prisma: PrismaService) {}
-
-  async create(userId: number, createPostDto: CreatePostDto) {
-    await this.prisma.posts.create({
-      data: {
-        title: createPostDto.title,
-        description: createPostDto.description,
-        users: {
-          connect: { id: userId },
-        },
-      },
-    });
-  }
 
   async findAll() {
     const posts = await this.prisma.posts.findMany({
@@ -36,7 +23,7 @@ export class PostsService {
     return posts;
   }
 
-  async findOne(postId: number) {
+  async findOne(postId: string) {
     const post = await this.prisma.posts.findUnique({
       where: { id: postId },
       select: {
@@ -58,7 +45,7 @@ export class PostsService {
     return post;
   }
 
-  async update(postId: number, updatePost: UpdatePostDto) {
+  async update(postId: string, updatePost: UpdatePostDto) {
     const existingPost = await this.prisma.posts.findUnique({
       where: { id: postId },
     });
@@ -72,7 +59,7 @@ export class PostsService {
     });
   }
 
-  async remove(postId: number) {
+  async remove(postId: string) {
     const existingPost = await this.prisma.posts.findUnique({
       where: { id: postId },
     });
