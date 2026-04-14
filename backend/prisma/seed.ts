@@ -30,17 +30,16 @@ const sampleWords = [
   'fonction',
   'javascript',
   'typescript',
-  'lorem',
-  'ipsum',
-  'dolor',
-  'sit',
-  'amet',
+  'audio',
+  'podcast',
+  'son',
+  'enregistrement',
 ];
 
 function generateRandomText(minWords: number, maxWords: number) {
   const numWords =
     Math.floor(Math.random() * (maxWords - minWords + 1)) + minWords;
-  const result: string[] = []; // <-- LA CORRECTION EST ICI
+  const result: string[] = []; // Le type est bien défini ici pour éviter l'erreur "never"
 
   for (let i = 0; i < numWords; i++) {
     result.push(sampleWords[Math.floor(Math.random() * sampleWords.length)]);
@@ -52,9 +51,12 @@ function generateRandomText(minWords: number, maxWords: number) {
 // ---------------------------------------------------------------------
 
 async function main() {
+  // 1. Nettoyage dans le bon ordre (les posts d'abord car ils dépendent des audios et users)
   await prisma.posts.deleteMany();
+  await prisma.audios.deleteMany();
   await prisma.users.deleteMany();
 
+  // 2. Création des 10 utilisateurs
   const usersData = Array.from({ length: 10 }).map((_, index) => ({
     name: `Utilisateur ${index + 1}`,
     password: '123',
@@ -66,27 +68,45 @@ async function main() {
 
   const createdUsers = await prisma.users.findMany();
 
-  const postsData = Array.from({ length: 100 }).map((_, index) => {
+  // 3. Création des 100 posts + audios via la même procédure que votre AudioService
+  console.log('Création des posts et audios en cours...');
+
+  for (let i = 0; i < 100; i++) {
     const randomUser =
       createdUsers[Math.floor(Math.random() * createdUsers.length)];
 
-    return {
-      // Titre généré : entre 2 et 8 mots
-      title: `[${index + 1}] ` + generateRandomText(2, 8),
+    // Utilisation de la transaction pour mimer la logique de votre service
+    await prisma.$transaction(async (tx) => {
+      // a. On crée l'audio avec des fausses données cohérentes
+      const newAudio = await tx.audios.create({
+        data: {
+          key: `fake-s3-key-${Date.now()}-${i}.mp3`, // Clé unique obligatoire
+          mimeType: 'audio/mpeg',
+          originalName: `maquette_audio_${i + 1}.mp3`,
+          size: Math.floor(Math.random() * 5000000) + 1000000, // Taille aléatoire entre 1 et 6 Mo
+          status: 'ATTACHED',
+        },
+      });
 
-      // Description générée : entre 10 et 40 mots
-      description: generateRandomText(10, 40) + '.',
-
-      usersId: randomUser.id,
-    };
-  });
-
-  await prisma.posts.createMany({
-    data: postsData,
-  });
+      // b. On crée le post lié à l'audio et à l'utilisateur
+      await tx.posts.create({
+        data: {
+          title: `[${i + 1}] ` + generateRandomText(2, 8),
+          description: generateRandomText(10, 40) + '.',
+          status: 'DRAFT', // Comme dans votre service
+          users: {
+            connect: { id: randomUser.id },
+          },
+          audioFile: {
+            connect: { id: newAudio.id },
+          },
+        },
+      });
+    });
+  }
 
   console.log(
-    '✅ Seed terminé avec succès : 10 utilisateurs et 100 posts (avec textes variables) créés.',
+    '✅ Seed terminé avec succès : 10 utilisateurs, 100 audios et 100 posts liés créés.',
   );
 }
 
