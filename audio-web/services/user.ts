@@ -16,7 +16,6 @@ export async function login(name: string, password: string) {
   try {
     const api = await createPublicApi();
     const { data } = await api.post("/auth/login", { name, password });
-    console.log("api : ", data)
     await signIn("credentials", {
       id: data.user.id,
       name: data.user.name,

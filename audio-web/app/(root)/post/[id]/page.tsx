@@ -14,7 +14,6 @@ export default async function ProductPage({ params }: PostPageProps) {
      getPost(id),
      getAllPosts(),
    ])
-  console.log(error)
   if (error || !data) {
     return (
       <Empty>

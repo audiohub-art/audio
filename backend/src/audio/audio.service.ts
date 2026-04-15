@@ -22,7 +22,6 @@ export class AudioService {
     } catch {
       throw new InternalServerErrorException();
     }
-
     try {
       return await this.prisma.$transaction(async (tx) => {
         const newAudio = await tx.audios.create({

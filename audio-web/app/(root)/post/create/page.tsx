@@ -3,6 +3,7 @@ import { FormPost } from "@/components/post/form";
 import { Button } from "@/components/ui/button";
 import { createPost } from "@/services/post";
 import { toast } from "sonner";
+import { AudioUpload } from "@/components/post/audio-upload";
 
 export default function post() {
   const handleCreate = async (data: { title: string, description: string }) => {
@@ -21,6 +22,7 @@ export default function post() {
         <Button type="submit" form="form-post" className="">Publish</Button>
       </div>
       <div className="container mx-auto p-6">
+        <AudioUpload />
         <FormPost onSubmit={handleCreate}/>
       </div>
     </div>

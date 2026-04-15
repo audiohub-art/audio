@@ -9,14 +9,27 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class S3Service {
-  private readonly client = new S3Client({ region: 'us-east-1' });
-  private readonly bucket = process.env.S3_BUCKET_NAME;
+  private readonly client: S3Client;
+  private readonly bucket: string;
+
+  constructor() {
+    this.bucket = process.env.S3_BUCKET_NAME!;
+
+    this.client = new S3Client({
+      region: 'us-east-1',
+      endpoint: `http://${process.env.S3_ENDPOINT}`,
+      forcePathStyle: true,
+      credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY!,
+        secretAccessKey: process.env.S3_SECRET_KEY!,
+      },
+    });
+  }
 
   async uploadAudio(
     file: Express.Multer.File,
   ): Promise<{ key: string; url: string }> {
     const key = `audio/${randomUUID()}-${file.originalname}`;
-
     await this.client.send(
       new PutObjectCommand({
         Bucket: this.bucket,
