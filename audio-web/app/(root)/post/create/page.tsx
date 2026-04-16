@@ -21,9 +21,11 @@ export default function post() {
         <h1>Create Post</h1>
         <Button type="submit" form="form-post" className="">Publish</Button>
       </div>
-      <div className="container mx-auto p-6">
-        <AudioUpload />
-        <FormPost onSubmit={handleCreate}/>
+      <div className="container mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="w-full">
+          <AudioUpload />
+        </div>
+        <FormPost onSubmit={handleCreate} />
       </div>
     </div>
   );

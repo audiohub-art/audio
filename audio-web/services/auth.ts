@@ -16,7 +16,6 @@ export const { handlers, signIn, signOut, auth }  = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.accessToken) return null;
-
         return {
           id: credentials.id as string,
           name: credentials.name as string,
@@ -58,6 +57,8 @@ export const { handlers, signIn, signOut, auth }  = NextAuth({
   },
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
+    updateAge: 60,
   },
   pages: {
     signIn: "/login",
@@ -76,7 +77,6 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
         }
       }
     )
-
     return {
       ...token,
       accessToken: data.accessToken,
