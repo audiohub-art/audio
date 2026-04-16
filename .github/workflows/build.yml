@@ -1,0 +1,97 @@
+name: Build image of backend and frontend
+
+on:
+  release:
+    types: released
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_BACKEND: ${{ github.repository }}-backend
+  IMAGE_FRONTEND: ${{ github.repository }}-frontend
+
+jobs:
+  backend-build:
+    name: Build backend image
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up docker build
+        uses: docker/setup-buildx-action@v3
+
+      - name: login into registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: find new version
+        id: version-backend
+        run: |
+          VERSION=$(grep '"version":' package.json | cut -d'"' -f4)
+          if [ -z "$EXTRACTED_VERSION" ]; then
+            echo "Erreur : Impossible de trouver la version dans Cargo.toml"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          labels: audio-backend
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:${{ steps.version-backend.outputs.version }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
+
+  frontend-build:
+    name: Build frontend image
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./audio-web
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up docker build
+        uses: docker/setup-buildx-action@v3
+
+      - name: login into registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: find new version
+        id: version-frontend
+        run: |
+          VERSION=$(grep '"version":' package.json | cut -d'"' -f4)
+          if [ -z "$EXTRACTED_VERSION" ]; then
+            echo "Erreur : Impossible de trouver la version dans Cargo.toml"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          labels: audio-frontend
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:${{ steps.version-frontend.outputs.version }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
