@@ -33,11 +33,11 @@ export async function getPost(id: string): Promise<ServiceResponse<Post>> {
   }
 }
 
-export async function createPost(title: string, description: string): Promise<ServiceResponse<undefined>> {
+export async function updatePost(id: string, title: string, description: string): Promise<ServiceResponse<undefined>> {
   try {
     const api = await createPrivateApi();
 
-    await api.post("/posts/create", { title, description });
+    await api.post(`/posts/modify/${id}`, { title, description });
 
     return { data: undefined, error: null }
   } catch (error) {

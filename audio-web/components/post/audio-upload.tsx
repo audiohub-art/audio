@@ -8,7 +8,7 @@ import { AudioPlayer } from "./audio-player";
 const ALLOWED_TYPES = ["audio/mpeg", "audio/wav", "audio/ogg", "audio/mp4", "audio/webm", "audio/mp3"];
 const MAX_SIZE_MB = 100;
 
-export function AudioUpload() {
+export function AudioUpload({ getPostId }: { getPostId: (postId: string) => void}) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -45,6 +45,9 @@ export function AudioUpload() {
     }
     setAudioUrl(tempUrl)
     setAudioFile(file)
+    if (data) {
+      getPostId(data.id)
+    }
     toast.success("Upload audio successfully", { position: "top-right" })
   }
 

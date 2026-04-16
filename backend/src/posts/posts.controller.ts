@@ -36,14 +36,14 @@ export class PostsController {
 
   @Put('modify/:id')
   async update(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id') id: string,
     @Body(new ZodValidationPipe(updatePostSchema)) updatePostDto: UpdatePostDto,
   ) {
     return await this.postsService.update(id, updatePostDto);
   }
 
   @Delete('delete/:id')
-  async remove(@Param('id', ParseIntPipe) id: string) {
+  async remove(@Param('id') id: string) {
     return await this.postsService.remove(id);
   }
 }
