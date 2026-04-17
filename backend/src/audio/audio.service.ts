@@ -3,8 +3,8 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { S3Service } from 'src/s3/s3.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { S3Service } from '../s3/s3.service';
 
 @Injectable()
 export class AudioService {

@@ -8,14 +8,7 @@ export async function uploadAudio(formData: FormData): Promise<ServiceResponse<P
     const api = await createPrivateApi();
     const audio = formData.get('file') as File
     if (!audio) return { data: null, error: "No file provided" };
-
-    const arrayBuffer = await audio.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    const nodeFormData = new FormData();
-    const blob = new Blob([buffer], { type: audio.type });
-    nodeFormData.append("file", blob, audio.name);
-    const data = await api.post("/audio/upload", nodeFormData, {
+    const data = await api.post("/audio/upload", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

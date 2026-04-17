@@ -12,9 +12,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { Public } from 'src/auth/decorators/public.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Public } from '../auth/decorators/public.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { AudioService } from './audio.service';
 
 const ALLOWED_MIME_TYPES = [

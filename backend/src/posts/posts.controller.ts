@@ -8,13 +8,12 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { UpdatePostDto, updatePostSchema } from './dto/update-post.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { Public } from 'src/auth/decorators/public.decorator';
-import { ZodValidationPipe } from 'src/pipes/zod-validation.pipe';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Public } from '../auth/decorators/public.decorator';
+import { ZodValidationPipe } from '../pipes/zod-validation.pipe';
 
 @Controller('posts')
 @UseGuards(JwtAuthGuard)
