@@ -3,7 +3,7 @@ name: Build image of backend and frontend
 on:
   push:
     branches:
-      - main
+      - master
 
 env:
   REGISTRY: ghcr.io
