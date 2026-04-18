@@ -1,0 +1,86 @@
+version: '3'
+
+services:
+  database:
+    image: postgres:18
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: audio
+    volumes:
+      - data:/var/lib/postgresql
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U username -d audio"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  minio:
+    image: minio/minio
+    environment:
+      - MINIO_ROOT_USER=root
+      - MINIO_ROOT_PASSWORD=passwordroot
+      - MINIO_DEFAULT_BUCKETS=audio
+    networks:
+      - minio-network
+      - backend-network
+    volumes:
+      - minio-volume:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: [ "server", "--console-address", ":9001", "/data" ]
+
+  backend:
+    image: fabreantoine/audio-backend:latest
+    ports:
+      - 3333:3333
+    environment:
+      - DATABASE_URL=postgres://username:password@database:5432/audio?schema=public
+      - JWT_ACCESS_SECRET=124352
+      - JWT_REFRESH_SECRET=123453
+      - S3_ENDPOINT=minio:9000
+      - S3_ACCESS_KEY=root
+      - S3_SECRET_KEY=passwordroot
+      - S3_BUCKET_NAME=audio
+    depends_on:
+      database:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      - backend-network
+      - minio-network
+
+  frontend:
+    image: fabreantoine/audio-frontend:latest
+    ports:
+      - 3000:3000
+    environment:
+      - BACKEND_URL=http://backend:3333
+      - AUTH_SECRET=12341234
+      - AUTH_URL=https://audiohub.art
+
+    depends_on:
+      database:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      - backend-network
+
+volumes:
+  data:
+  minio-volume:
+    driver: local
+
+networks:
+  minio-network:
+    driver: bridge
+  backend-network:
+    driver: bridge
