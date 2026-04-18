@@ -6,8 +6,8 @@ on:
       - master
 
 env:
-  IMAGE_BACKEND: ${{ github.repository }}-backend
-  IMAGE_FRONTEND: ${{ github.repository }}-frontend
+  IMAGE_BACKEND: audio-backend
+  IMAGE_FRONTEND: audio-frontend
 
 jobs:
   backend-build:
