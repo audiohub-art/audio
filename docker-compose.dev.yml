@@ -37,7 +37,9 @@ services:
     command: [ "server", "--console-address", ":9001", "/data" ]
 
   backend:
-    image: fabreantoine/audio-backend:latest
+    build:
+      context: backend/
+      dockerfile: Dockerfile
     ports:
       - 3333:3333
     environment:
@@ -58,13 +60,15 @@ services:
       - minio-network
 
   frontend:
-    image: fabreantoine/audio-frontend:latest
+    build:
+      context: audio-web/
+      dockerfile: Dockerfile
     ports:
       - 3000:3000
     environment:
       - BACKEND_URL=http://backend:3333
       - AUTH_SECRET=12341234
-      - AUTH_URL=https://audiohub.art
+      - AUTH_URL=http://localhost:3000
 
     depends_on:
       database:
