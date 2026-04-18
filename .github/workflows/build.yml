@@ -13,9 +13,6 @@ jobs:
   backend-build:
     name: Build backend image
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
     permissions:
       contents: read
       packages: write
@@ -45,7 +42,7 @@ jobs:
       - name: build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./backend
           push: true
           labels: audio-backend
           tags: |
@@ -55,9 +52,6 @@ jobs:
   frontend-build:
     name: Build frontend image
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./audio-web
     permissions:
       contents: read
       packages: write
@@ -87,7 +81,7 @@ jobs:
       - name: build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./audio-web
           push: true
           labels: audio-frontend
           tags: |
