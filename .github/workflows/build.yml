@@ -13,6 +13,9 @@ jobs:
   backend-build:
     name: Build backend image
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
     permissions:
       contents: read
       packages: write
@@ -52,6 +55,9 @@ jobs:
   frontend-build:
     name: Build frontend image
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./audio-web
     permissions:
       contents: read
       packages: write
