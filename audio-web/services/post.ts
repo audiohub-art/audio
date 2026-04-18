@@ -33,14 +33,15 @@ export async function getPost(id: string): Promise<ServiceResponse<Post>> {
   }
 }
 
-export async function createPost(title: string, description: string): Promise<ServiceResponse<undefined>> {
+export async function updatePost(id: string, title: string, description: string): Promise<ServiceResponse<undefined>> {
   try {
     const api = await createPrivateApi();
 
-    await api.post("/posts/create", { title, description });
-
+    const res = await api.put(`/posts/modify/${id}`, { title, description });
+    console.log("res : ", res)
     return { data: undefined, error: null }
   } catch (error) {
+    console.log("error : ", error)
     return {
       data: null,
       error: error instanceof Error ? error.message : "Failed to create post",

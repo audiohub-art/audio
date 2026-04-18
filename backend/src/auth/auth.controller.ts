@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type RegisterDto, registerSchema } from './dto/register.dto';
-import { ZodValidationPipe } from 'src/pipes/zod-validation.pipe';
+import { ZodValidationPipe } from '../pipes/zod-validation.pipe';
 import { AuthService } from './auth.service';
 import { type LoginDto, loginSchema } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
