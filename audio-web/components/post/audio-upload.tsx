@@ -36,10 +36,14 @@ export function AudioUpload({ getPostId }: { getPostId: (postId: string) => void
     const formData = new FormData();
     formData.append("file", file);
     const tempUrl = URL.createObjectURL(file)
-    const { data, error } = await uploadAudio(formData);
+    const res = await fetch('/api/audio/upload', {
+      method: 'POST',
+      body: formData,
+    })
+    const data = await res.json()
     setIsLoading(false);
 
-    if (error) {
+    if (!res.ok) {
       toast.error("Failed to upload audio", { position: "top-right" })
       return
     }

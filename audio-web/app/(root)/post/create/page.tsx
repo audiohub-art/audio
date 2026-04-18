@@ -13,6 +13,7 @@ export default function PostCreate() {
       toast.error("Failed to publish post, you must put an audio", { position: "top-right" })
     } else {
       const res = await updatePost(postId, data.title, data.description)
+      console.log("res : ", res)
       if (!res.error) {
         toast.success("Post publish successfully", { position: "top-right"})
       } else {

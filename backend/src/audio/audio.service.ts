@@ -19,8 +19,9 @@ export class AudioService {
     let result: { key: string; url: string };
     try {
       result = await this.s3.uploadAudio(file);
-    } catch {
-      throw new InternalServerErrorException();
+    } catch (e) {
+      console.log('error : ', e);
+      throw new InternalServerErrorException(e);
     }
     try {
       return await this.prisma.$transaction(async (tx) => {
