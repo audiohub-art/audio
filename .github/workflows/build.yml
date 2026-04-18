@@ -6,7 +6,6 @@ on:
       - master
 
 env:
-  REGISTRY: ghcr.io
   IMAGE_BACKEND: ${{ github.repository }}-backend
   IMAGE_FRONTEND: ${{ github.repository }}-frontend
 
@@ -30,9 +29,8 @@ jobs:
       - name: login into registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: antoinefabr
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: fabreantoine
+          password: ${{ secrets.TOKEN_REGISTRY }}
 
       - name: find new version
         id: version-backend
@@ -51,8 +49,8 @@ jobs:
           push: true
           labels: audio-backend
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:${{ steps.version-backend.outputs.version }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
+            fabreantoine/${{ env.IMAGE_BACKEND }}:${{ steps.version-backend.outputs.version }}
+            fabreantoine/${{ env.IMAGE_BACKEND }}:latest
 
   frontend-build:
     name: Build frontend image
@@ -73,9 +71,8 @@ jobs:
       - name: login into registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: fabreantoine
+          password: ${{ secrets.TOKEN_REGISTRY }}
 
       - name: find new version
         id: version-frontend
@@ -94,5 +91,5 @@ jobs:
           push: true
           labels: audio-frontend
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:${{ steps.version-frontend.outputs.version }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
+            fabreantoine/${{ env.IMAGE_FRONTEND }}:${{ steps.version-frontend.outputs.version }}
+            fabreantoine/${{ env.IMAGE_FRONTEND }}:latest
