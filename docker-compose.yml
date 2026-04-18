@@ -40,7 +40,9 @@ services:
 
   backend:
     restart: always
-    image: fabreantoine/audio-backend:latest
+    build:
+      context: backend/
+      dockerfile: Dockerfile
     ports:
       - 3333:3333
     env_file: .env
@@ -55,7 +57,9 @@ services:
 
   frontend:
     restart: always
-    image: fabreantoine/audio-frontend:latest
+    build:
+      context: audio-web/
+      dockerfile: Dockerfile
     ports:
       - 3000:3000
     env_file: .env
