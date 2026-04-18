@@ -1,8 +1,9 @@
 name: Build image of backend and frontend
 
 on:
-  release:
-    types: released
+  push:
+    branches:
+      - main
 
 env:
   REGISTRY: ghcr.io
