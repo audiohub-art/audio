@@ -1,0 +1,39 @@
+- name: Create service
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: "{{ app }}-backend"
+        namespace: "{{ namespace }}"
+      spec:
+        selector:
+          app: "{{ app }}-backend"
+        ports:
+          - name: "{{ app }}-svc-port"
+            protocol: TCP
+            port: 80
+            targetPort: 3333
+
+- name: Create Deployment
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: "{{ app }}-backend"
+        namespace: "{{ namespace }}"
+      spec:
+        replicas: 1
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxUnavailable: 1
+        selector:
+          matchLabels:
+            app: "{{ app }}-backend"
+        template:
+          metadata:
+            labels:
+              app: "{{ app }}-backend"
+              

@@ -23,6 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up qemu
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up docker build
         uses: docker/setup-buildx-action@v3
 
@@ -47,6 +50,7 @@ jobs:
         with:
           context: ./backend
           push: true
+          platforms: linux/arm64
           labels: audio-backend
           tags: |
             fabreantoine/${{ env.IMAGE_BACKEND }}:${{ steps.version-backend.outputs.version }}
@@ -64,6 +68,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up qemu
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up docker build
         uses: docker/setup-buildx-action@v3
@@ -89,6 +96,7 @@ jobs:
         with:
           context: ./audio-web
           push: true
+          platforms: linux/arm64
           labels: audio-frontend
           tags: |
             fabreantoine/${{ env.IMAGE_FRONTEND }}:${{ steps.version-frontend.outputs.version }}

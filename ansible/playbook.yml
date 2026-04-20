@@ -1,0 +1,27 @@
+- name: frontend
+  hosts: all
+  roles:
+    - role: roles/frontend
+  tags:
+    - frontend
+
+- name: backend
+  hosts: all
+  roles:
+    - role: roles/backend
+  tags:
+    - backend
+
+- name: postgres
+  hosts: all
+  roles:
+    - role: roles/postgres
+  tags:
+    - postgres
+
+- name: s3
+  hosts: all
+  roles:
+    - role: roles/s3
+  tags:
+    - s3

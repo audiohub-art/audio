@@ -1,0 +1,9 @@
+all:
+  children:
+    k3s:
+      hosts:
+        localhost:
+          ansible_connection: local
+          k8s_host: "https://{{ secrets.vm.ip }}:6443"
+          k8s_api_key: "{{ secrets.k3s.token }}"
+          k8s_validate_certs: false

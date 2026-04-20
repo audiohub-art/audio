@@ -1,0 +1,71 @@
+#!/bin/bash
+#
+# This is a wrapper around ansible-playbook for deploying.
+#
+# Easy to use with ansible (default is --test)
+#   ./audsible --test
+#   ./audsible --prod
+
+export ANSIBLE_JINJA2_NATIVE=true
+set -e
+cd "$(cd "$(dirname "$0")"; pwd)"
+
+help () {
+    cat <<HELP_MSG
+Usage:
+
+  $0 [ -t sometag ] [OPTION]
+
+Options:
+  --test        Deploy to test environment
+  --prod        Deploy to production environment
+  --help        Display this help
+
+HELP_MSG
+    exit 1
+}
+
+ensure_suitcase () {
+    if ! test -f ansible-deps-cache/.versions 2>/dev/null; then
+        curl https://raw.githubusercontent.com/epfl-si/ansible.suitcase/master/install.sh | \
+            SUITCASE_DIR=$PWD/ansible-deps-cache \
+            SUITCASE_ANSIBLE_VERSION=10.7.0 \
+            bash -x
+    fi
+    . ansible-deps-cache/lib.sh
+    ensure_ansible_runtime
+    ansible-galaxy collection install community.docker > /dev/null 2>&1
+}
+
+ensure_suitcase
+
+[ "$1" == "--help" ] && help
+
+declare -a ansible_args
+ansible_args=()
+inventory_mode="test"
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --help)
+            help ;;
+        --test)
+            shift ;;
+        --prod)
+            inventory_mode="prod"
+            shift ;;
+        *)
+            ansible_args+=("$1")
+            shift ;;
+    esac
+done
+
+inventories () {
+    case "$inventory_mode" in
+        test) echo "-i inventory/test.yml" ;;
+        prod) echo "-i inventory/prod.yml" ;;
+        *) echo "Invalid inventory_mode" >&2; exit 1 ;;
+    esac
+}
+
+ansible-playbook $(inventories) "${ansible_args[@]}" playbook.yml
