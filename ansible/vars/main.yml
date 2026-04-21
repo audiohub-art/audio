@@ -1,2 +1,0 @@
-secrets: "{{ lookup('pipe', 'keybase fs read /keybase/team/audiohub/secrets.yml') | from_yaml }}"
-app: audio

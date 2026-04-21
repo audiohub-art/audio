@@ -1,3 +1,10 @@
+- name: namespace
+  hosts: all
+  roles:
+    - role: roles/namespace
+  tags:
+    - namespace
+
 - name: frontend
   hosts: all
   roles:

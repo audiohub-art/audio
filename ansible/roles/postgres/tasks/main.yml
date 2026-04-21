@@ -1,0 +1,17 @@
+- name: Create cluster and db
+  include_tasks:
+    file: postgres.yml
+    apply:
+      tags:
+        - postgres.postgres
+  tags:
+    - postgres.postgres
+
+- name: Ensure Secrets
+  include_tasks:
+    file: secrets.yml
+    apply:
+      tags:
+        - postgres.secrets
+  tags:
+    - postgres.secrets
