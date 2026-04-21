@@ -29,12 +29,21 @@ ensure_suitcase () {
     if ! test -f ansible-deps-cache/.versions 2>/dev/null; then
         curl https://raw.githubusercontent.com/epfl-si/ansible.suitcase/master/install.sh | \
             SUITCASE_DIR=$PWD/ansible-deps-cache \
+            SUITCASE_PIP_EXTRA="kubernetes" \
             SUITCASE_ANSIBLE_VERSION=10.7.0 \
             bash -x
     fi
     . ansible-deps-cache/lib.sh
     ensure_ansible_runtime
-    ansible-galaxy collection install community.docker > /dev/null 2>&1
+    ansible-galaxy collection install kubernetes.core > /dev/null 2>&1
+}
+
+ensure_kubeconfig () {
+    if [ ! -f "$KUBECONFIG_PATH" ]; then
+        echo "Failed to load KUBECONFIG_PATH"
+        exit 1
+    fi
+    export K8S_AUTH_KUBECONFIG="$KUBECONFIG_PATH"
 }
 
 ensure_suitcase
@@ -44,6 +53,8 @@ ensure_suitcase
 declare -a ansible_args
 ansible_args=()
 inventory_mode="test"
+
+KUBECONFIG_PATH="/keybase/team/audiohub/k8s-config"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
@@ -59,6 +70,8 @@ while [ "$#" -gt 0 ]; do
             shift ;;
     esac
 done
+
+ensure_kubeconfig
 
 inventories () {
     case "$inventory_mode" in
