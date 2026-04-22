@@ -1,3 +1,12 @@
+- name: setup Storage
+  include_tasks:
+    file: setup-storage.yml
+    apply:
+      tags:
+        - postgres.storage
+  tags:
+    - postgres.storage
+
 - name: Create cluster and db
   include_tasks:
     file: postgres.yml

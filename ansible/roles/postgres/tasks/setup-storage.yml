@@ -1,0 +1,18 @@
+- name: Set up storage
+  kubernetes.core.k8s:
+    state: present
+    src: https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+
+- name: storage
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: local-path-storage
+    label_selectors:
+      - app=local-path-provisioner
+  register: provisioner_pod
+  until: >
+    provisioner_pod.resources is defined and
+    provisioner_pod.resources | length > 0 and
+    provisioner_pod.resources[0].status.phase == "Running"
+  retries: 10
+  delay: 5

@@ -32,3 +32,10 @@
     - role: roles/s3
   tags:
     - s3
+
+- name: nginx
+  hosts: all
+  roles:
+    - role: roles/nginx
+  tags:
+    - nginx

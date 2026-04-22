@@ -10,6 +10,7 @@
       spec:
         accessModes:
           - ReadWriteOnce
+        storageClassName: local-path
         resources:
           requests:
             storage: 1Gi
@@ -24,7 +25,7 @@
         name: "{{ app }}-db"
         namespace: "{{ k8s_namespace }}"
       spec:
-        replicas: 1 # Un seul pod suffit largement
+        replicas: 1
         selector:
           matchLabels:
             app: "{{ app }}-db"
