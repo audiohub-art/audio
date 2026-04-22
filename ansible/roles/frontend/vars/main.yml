@@ -1,4 +1,0 @@
-image: fabreantoine/audio-frontend
-version: 0.3.0
-app: audio
-secrets: "{{ lookup('pipe', 'keybase fs read /keybase/team/audiohub/secrets.yml') | from_yaml }}"

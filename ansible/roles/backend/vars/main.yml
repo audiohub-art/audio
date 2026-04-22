@@ -1,6 +1,0 @@
-image: fabreantoine/audio-backend
-version: 0.4.0
-app: audio
-secrets: "{{ lookup('pipe', 'keybase fs read /keybase/team/audiohub/secrets.yml') | from_yaml }}"
-domain: audiohub.art
-subdomain: api
