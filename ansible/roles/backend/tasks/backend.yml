@@ -1,0 +1,60 @@
+- name: Create service
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: "{{ app }}-backend"
+        namespace: "{{ k8s_namespace }}"
+      spec:
+        selector:
+          app: "{{ app }}-backend"
+        ports:
+          - name: "{{ app }}-svc-port"
+            protocol: TCP
+            port: 80
+            targetPort: 3333
+
+- name: Create Deployment
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: "{{ app }}-backend"
+        namespace: "{{ k8s_namespace }}"
+      spec:
+        replicas: 1
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxUnavailable: 1
+        selector:
+          matchLabels:
+            app: "{{ app }}-backend"
+        template:
+          metadata:
+            labels:
+              app: "{{ app }}-backend"
+          spec:
+            containers:
+              - image: "{{ image }}:{{ version }}"
+                imagePullPolicy: Always
+                name: "{{ app }}-backend"
+                ports:
+                  - containerPort: 3333
+                envFrom:
+                  - secretRef:
+                      name: "{{ app }}-backend-secrets"
+                resources:
+                  requests:
+                    cpu: 50m
+                    memory: 120Mi
+                  limits:
+                    cpu: 200m
+                    memory: 512Mi
+                readinessProbe:
+                  tcpSocket:
+                    port: 3333
+                  initialDelaySeconds: 5
+                  timeoutSeconds: 3

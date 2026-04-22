@@ -1,0 +1,17 @@
+- name: Create s3 Secrets
+  include_tasks:
+    file: secrets.yml
+    apply:
+      tags:
+        - s3.secrets
+  tags:
+    - s3.secrets
+
+- name: setup s3 service
+  include_tasks:
+    file: s3.yml
+    apply:
+      tags:
+        - s3.s3
+  tags:
+    - s3.s3

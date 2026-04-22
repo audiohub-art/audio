@@ -1,0 +1,17 @@
+- name: Ensure Secrets
+  include_tasks:
+    file: secrets.yml
+    apply:
+      tags:
+        - backend.secrets
+  tags:
+    - backend.secrets
+
+- name: Deploy backend
+  include_tasks:
+    file: backend.yml
+    apply:
+      tags:
+        - backend.backend
+  tags:
+    - backend.backend
