@@ -36,28 +36,6 @@ services:
       - "9001:9001"
     command: [ "server", "--console-address", ":9001", "/data" ]
 
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 3333:3333
-    environment:
-      - DATABASE_URL=postgres://username:password@database:5432/audio?schema=public
-      - JWT_ACCESS_SECRET=124352
-      - JWT_REFRESH_SECRET=123453
-      - S3_ENDPOINT=localhost:9000
-      - S3_ACCESS_KEY=root
-      - S3_SECRET_KEY=passwordroot
-      - S3_BUCKET_NAME=audio
-    depends_on:
-      database:
-        condition: service_healthy
-      minio:
-        condition: service_started
-    networks:
-      - backend-network
-
 volumes:
   data:
   minio-volume:
