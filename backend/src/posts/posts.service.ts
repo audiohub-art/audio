@@ -12,6 +12,11 @@ export class PostsService {
         id: true,
         title: true,
         description: true,
+        audioFile: {
+          select: {
+            key: true,
+          },
+        },
         users: {
           select: {
             id: true,
