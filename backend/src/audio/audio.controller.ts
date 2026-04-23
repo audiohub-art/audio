@@ -2,13 +2,13 @@ import {
   Controller,
   Post,
   Get,
-  Param,
   UseInterceptors,
   UploadedFile,
   BadRequestException,
   UseGuards,
   HttpStatus,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -58,9 +58,12 @@ export class AudioController {
     return this.audioService.uploadAudioFile(userId, file);
   }
 
-  @Get(':key/url')
+  @Get('url')
   @Public()
-  async getUrl(@Param('key') key: string) {
+  async getUrl(@Query('key') key: string) {
+    if (!key) {
+      throw new BadRequestException('key is required');
+    }
     return this.audioService.getUrl(key);
   }
 }
