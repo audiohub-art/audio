@@ -9,15 +9,25 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class S3Service {
-  private readonly client: S3Client;
+  private readonly privateClient: S3Client;
+  private readonly publicClient: S3Client;
   private readonly bucket: string;
 
   constructor() {
     this.bucket = process.env.S3_BUCKET_NAME!;
 
-    this.client = new S3Client({
+    this.privateClient = new S3Client({
       region: 'us-east-1',
-      endpoint: `http://${process.env.S3_ENDPOINT}`,
+      endpoint: `${process.env.S3_ENDPOINT}`,
+      forcePathStyle: true,
+      credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY!,
+        secretAccessKey: process.env.S3_SECRET_KEY!,
+      },
+    });
+    this.publicClient = new S3Client({
+      region: 'us-east-1',
+      endpoint: `${process.env.S3_PUBLIC_ENDPOINT}`,
       forcePathStyle: true,
       credentials: {
         accessKeyId: process.env.S3_ACCESS_KEY!,
@@ -30,7 +40,7 @@ export class S3Service {
     file: Express.Multer.File,
   ): Promise<{ key: string; url: string }> {
     const key = `audio/${randomUUID()}-${file.originalname}`;
-    await this.client.send(
+    await this.privateClient.send(
       new PutObjectCommand({
         Bucket: this.bucket,
         Key: key,
@@ -52,6 +62,6 @@ export class S3Service {
       Bucket: this.bucket,
       Key: key,
     });
-    return getSignedUrl(this.client, command, { expiresIn });
+    return getSignedUrl(this.publicClient, command, { expiresIn });
   }
 }
