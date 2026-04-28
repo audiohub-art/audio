@@ -37,6 +37,39 @@ export class UsersService {
     });
   }
 
+  async getMe(userId: number) {
+    const user = await this.prisma.users.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        posts: {
+          select: {
+            id: true,
+            createdAt: true,
+            description: true,
+            status: true,
+            title: true,
+            audioFile: {
+              select: {
+                id: true,
+                duration: true,
+                key: true,
+                originalName: true,
+                status: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
   async getUserById(userId: number) {
     const user = await this.prisma.users.findUnique({
       where: { id: userId },

@@ -10,8 +10,13 @@ import {
 import { UsersService } from './users.service';
 import { ZodValidationPipe } from '../pipes/zod-validation.pipe';
 import { type UpdateUserDto, updateUserSchema } from './dto/update-user.dto';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -28,7 +33,13 @@ export class UsersController {
     await this.usersService.deleteUser(id);
   }
 
+  @Get('me')
+  async getMe(@CurrentUser('sub') userId: number) {
+    return await this.usersService.getMe(userId);
+  }
+
   @Get(':id')
+  @Public()
   async getUserById(@Param('id', ParseIntPipe) id: number) {
     return await this.usersService.getUserById(id);
   }
