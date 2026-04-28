@@ -23,6 +23,10 @@ const ALLOWED_MIME_TYPES = [
   'audio/ogg',
   'audio/mp4',
   'audio/webm',
+  'audio/mp3',
+  'audio/vnd.wave',
+  'audio/x-wav',
+  'audio/wave',
 ];
 
 const audioFilter = (
