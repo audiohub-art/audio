@@ -11,9 +11,10 @@ import { UsersService } from './users.service';
 import { ZodValidationPipe } from '../pipes/zod-validation.pipe';
 import { type UpdateUserDto, updateUserSchema } from './dto/update-user.dto';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Public } from '../auth/decorators/public.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
