@@ -85,4 +85,50 @@ export class UsersService {
     const users = await this.prisma.users.findMany();
     return users;
   }
+
+  async followUser(userId: number, targetUserId: number) {
+    const follow = await this.prisma.follow.create({
+      data: {
+        followerId: userId,
+        followedId: targetUserId,
+      },
+    });
+    if (!follow) {
+      throw new Error('Failed to follow user');
+    }
+    return await this.prisma.users.findUnique({
+      where: { id: userId },
+      include: {
+        following: true,
+      },
+    });
+  }
+
+  async unfollowUser(userId: number, targetUserId: number) {
+    const follow = await this.prisma.follow.findUnique({
+      where: {
+        followerId_followedId: {
+          followerId: userId,
+          followedId: targetUserId,
+        },
+      },
+    });
+    if (!follow) {
+      throw new Error('Failed to unfollow user');
+    }
+    await this.prisma.follow.delete({
+      where: {
+        followerId_followedId: {
+          followerId: follow.followerId,
+          followedId: follow.followedId,
+        },
+      },
+    });
+    return await this.prisma.users.findUnique({
+      where: { id: userId },
+      include: {
+        following: true,
+      },
+    });
+  }
 }

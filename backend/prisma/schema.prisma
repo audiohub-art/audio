@@ -20,8 +20,23 @@ model users {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
   posts        posts[]
+  following    follow[] @relation("UserFollowing")
+  followers    follow[] @relation("UserFollowers")
 
   @@map("users")
+}
+
+model follow {
+  followerId  Int       @map("follower_id")
+  followedId  Int       @map("followed_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  follower    users     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  followed    users     @relation("UserFollowers", fields: [followedId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followedId])
+  @@index([followedId])
+
+  @@map("follows")
 }
 
 model posts {
