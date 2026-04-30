@@ -1,5 +1,6 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma/client';
+import slug from 'slug';
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -60,6 +61,7 @@ async function main() {
   const usersData = Array.from({ length: 10 }).map((_, index) => ({
     email: `utilisateur${index + 1}@example.com`,
     name: `Utilisateur ${index + 1}`,
+    slug: `${slug(`Utilisateur ${index + 1}`)}`,
     password: '123',
   }));
 

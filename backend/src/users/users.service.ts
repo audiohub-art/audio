@@ -71,9 +71,33 @@ export class UsersService {
     return user;
   }
 
-  async getUserById(userId: number) {
+  async getUserBySlug(slug: string) {
     const user = await this.prisma.users.findUnique({
-      where: { id: userId },
+      where: { slug },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        posts: {
+          select: {
+            id: true,
+            createdAt: true,
+            description: true,
+            status: true,
+            title: true,
+            audioFile: {
+              select: {
+                id: true,
+                duration: true,
+                key: true,
+                originalName: true,
+                status: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!user) {

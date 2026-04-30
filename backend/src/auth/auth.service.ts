@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Injectable,
   UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from '../auth/dto/register.dto';
@@ -11,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import { LoginDto } from './dto/login.dto';
 import bcrypt from 'bcrypt';
+import slug from 'slug';
 
 @Injectable()
 export class AuthService {
@@ -28,12 +30,23 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('This name is already taken');
+      if (existingUser.name === registerDto.name) {
+        throw new ConflictException('This username is already taken');
+      } else if (existingUser.email === registerDto.email) {
+        throw new ConflictException('This email is already registered');
+      }
     }
     const hashedPassword = await bcrypt.hash(registerDto.password, 12);
+    if (!registerDto.email) {
+      throw new BadRequestException('Email is required');
+    }
+    if (!registerDto.name) {
+      throw new BadRequestException('Name is required');
+    }
     const user = await this.prisma.users.create({
       data: {
         ...registerDto,
+        slug: slug(registerDto.name),
         password: hashedPassword,
       },
     });
@@ -98,6 +111,7 @@ export class AuthService {
         id: true,
         email: true,
         name: true,
+        slug: true,
       },
     });
     return { accessToken, refreshToken, expiresIn, user };

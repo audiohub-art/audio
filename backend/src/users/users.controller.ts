@@ -68,10 +68,10 @@ export class UsersController {
     return await this.usersService.getMe(userId);
   }
 
-  @Get(':id')
+  @Get(':slug')
   @Public()
-  async getUserById(@Param('id', ParseIntPipe) id: number) {
-    return await this.usersService.getUserById(id);
+  async getUserByName(@Param('slug') slug: string) {
+    return await this.usersService.getUserBySlug(slug);
   }
 
   @Get()
