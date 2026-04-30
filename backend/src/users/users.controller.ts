@@ -16,7 +16,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../auth/decorators/public.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
-
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {
@@ -44,6 +43,19 @@ export class UsersController {
     @CurrentUser('sub') userId: number,
   ) {
     await this.usersService.unfollowUser(userId, id);
+  }
+
+  @Get('following')
+  async getFollowing(@CurrentUser('sub') userId: number) {
+    return await this.usersService.getFollowing(userId);
+  }
+
+  @Get(':id/follow-status')
+  async getFollowStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('sub') userId: number,
+  ) {
+    return await this.usersService.getFollowStatus(userId, id);
   }
 
   @Delete(':id')

@@ -58,6 +58,7 @@ async function main() {
 
   // 2. Création des 10 utilisateurs
   const usersData = Array.from({ length: 10 }).map((_, index) => ({
+    email: `utilisateur${index + 1}@example.com`,
     name: `Utilisateur ${index + 1}`,
     password: '123',
   }));

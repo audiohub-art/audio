@@ -21,8 +21,10 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
-    const existingUser = await this.prisma.users.findUnique({
-      where: { name: registerDto.name },
+    const existingUser = await this.prisma.users.findFirst({
+      where: {
+        OR: [{ name: registerDto.name }, { email: registerDto.email }],
+      },
     });
 
     if (existingUser) {
@@ -35,17 +37,19 @@ export class AuthService {
         password: hashedPassword,
       },
     });
-    return this.generateAndStoreTokens(user.id, user.name);
+    return this.generateAndStoreTokens(user.id, user.name, user.email);
   }
 
   async login(loginDto: LoginDto) {
     const user = await this.prisma.users.findUnique({
-      where: { name: loginDto.name },
+      where: {
+        email: loginDto.email,
+      },
     });
     if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return await this.generateAndStoreTokens(user.id, user.name);
+    return await this.generateAndStoreTokens(user.id, user.name, user.email);
   }
 
   async refresh(userId: number, refreshToken: string) {
@@ -63,15 +67,19 @@ export class AuthService {
       });
       throw new ForbiddenException('Invalid token');
     }
-    return this.generateAndStoreTokens(userId, user.name);
+    return this.generateAndStoreTokens(userId, user.name, user.email);
   }
 
   private hashToken(token: string): string {
     return crypto.createHash('sha256').update(token).digest('hex');
   }
 
-  private async generateAndStoreTokens(userId: number, name: string) {
-    const payload = { sub: userId, name };
+  private async generateAndStoreTokens(
+    userId: number,
+    name: string,
+    email: string,
+  ) {
+    const payload = { sub: userId, name, email };
     const expiresIn = 15 * 60;
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
@@ -88,6 +96,7 @@ export class AuthService {
       data: { refreshToken: this.hashToken(refreshToken) },
       select: {
         id: true,
+        email: true,
         name: true,
       },
     });

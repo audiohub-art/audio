@@ -43,6 +43,7 @@ export class UsersService {
       select: {
         id: true,
         name: true,
+        email: true,
         createdAt: true,
         posts: {
           select: {
@@ -124,6 +125,27 @@ export class UsersService {
         },
       },
     });
+    return await this.prisma.users.findUnique({
+      where: { id: userId },
+      include: {
+        following: true,
+      },
+    });
+  }
+
+  async getFollowStatus(userId: number, targetUserId: number) {
+    const follow = await this.prisma.follow.findUnique({
+      where: {
+        followerId_followedId: {
+          followerId: userId,
+          followedId: targetUserId,
+        },
+      },
+    });
+    return !!follow;
+  }
+
+  async getFollowing(userId: number) {
     return await this.prisma.users.findUnique({
       where: { id: userId },
       include: {
